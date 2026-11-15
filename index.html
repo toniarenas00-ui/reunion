@@ -66,7 +66,7 @@
 <body>
 <header>
   <h1>Reunion 2027</h1>
-  <p>Welches Wochenende im 2. Halbjahr 2027 passt am besten? Trag ein, wann du kannst.</p>
+  <p>Welches Wochenende im Juni oder Juli 2027 passt am besten? Trag ein, wann du kannst.</p>
 </header>
 <main>
   <div id="banner" class="banner" hidden></div>
@@ -120,21 +120,15 @@ const NAMES = ['Alex','Anian','Anni','Elliot','Basti','Passi','Lotte','Tom',
                'Potter','Quint','Lena','Nadja','Sophie','Hanna','Toni'];
 
 // Feiertage in Bayern, Schlüssel = Freitag des Wochenendes
-const HOLIDAYS = {
-  '2027-08-13': 'So 15.08. Mariä Himmelfahrt',
-  '2027-10-01': 'So 03.10. Tag der Deutschen Einheit',
-  '2027-10-29': 'Mo 01.11. Allerheiligen: langes Wochenende',
-  '2027-12-24': 'Heiligabend, Sa/So Weihnachtsfeiertage',
-  '2027-12-31': 'Silvester, Sa 01.01. Neujahr'
-};
+const HOLIDAYS = {};  // im Juni und Juli 2027 kein Feiertag in Bayern
 const MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 
-/* ===== Wochenenden erzeugen (Freitage im 2. Halbjahr 2027) ===== */
+/* ===== Wochenenden erzeugen (Freitage im Juni und Juli 2027) ===== */
 const pad = n => String(n).padStart(2, '0');
 const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
 const dm = d => pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.';
 const WEEKENDS = [];
-for (let d = new Date(2027, 6, 2); d <= new Date(2027, 11, 31); d.setDate(d.getDate() + 7)) {
+for (let d = new Date(2027, 5, 4); d <= new Date(2027, 6, 31); d.setDate(d.getDate() + 7)) {
   const fri = new Date(d), sun = new Date(d); sun.setDate(sun.getDate() + 2);
   const id = iso(fri);
   WEEKENDS.push({ id, month: fri.getMonth(), label: 'Fr ' + dm(fri) + ' bis So ' + dm(sun), hol: HOLIDAYS[id] || '' });
