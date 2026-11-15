@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reunion 2027</title>
+<style>
+  :root {
+    --bg: #f6f5f1; --card: #fff; --ink: #1d1d1b; --muted: #6b6a66; --line: #e4e2dc;
+    --y: #2e9e5b; --y-bg: #e3f4ea; --m: #d9a400; --m-bg: #fbf2d3; --n: #d0463b; --n-bg: #fbe4e2;
+    --accent: #2f4fa8; --hol: #7a4fd1;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         background: var(--bg); color: var(--ink); line-height: 1.4; }
+  header { background: var(--ink); color: #fff; padding: 22px 16px 18px; }
+  header h1 { margin: 0 0 4px; font-size: 1.5rem; }
+  header p { margin: 0; color: #c9c7c0; font-size: .95rem; }
+  main { max-width: 860px; margin: 0 auto; padding: 16px; }
+  .banner { background: #fff3cd; border: 1px solid #e6d28f; padding: 10px 12px; border-radius: 10px;
+            margin-bottom: 14px; font-size: .9rem; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+  .tabs button { flex: 1; padding: 11px; border: 1px solid var(--line); background: var(--card);
+                 border-radius: 10px; font-size: 1rem; cursor: pointer; color: var(--ink); }
+  .tabs button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .panel { display: none; } .panel.active { display: block; }
+  .box { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+  label.lbl { font-weight: 600; display: block; margin-bottom: 6px; }
+  select { width: 100%; padding: 11px; font-size: 1rem; border-radius: 10px; border: 1px solid var(--line); background: #fff; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: .88rem; color: var(--muted); margin-top: 10px; }
+  .tools { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .tools button { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: .88rem; }
+  .month { font-weight: 700; margin: 18px 4px 8px; color: var(--muted); text-transform: uppercase; font-size: .8rem; letter-spacing: .05em; }
+  .wk { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--card);
+        border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+  .wk.s-y { background: var(--y-bg); border-color: #b7e0c6; }
+  .wk.s-m { background: var(--m-bg); border-color: #ecd98f; }
+  .wk.s-n { background: var(--n-bg); border-color: #efb9b3; }
+  .wk .date { font-weight: 600; }
+  .hol { display: inline-block; font-size: .78rem; color: var(--hol); background: #efe8fb; border-radius: 6px; padding: 1px 6px; margin-top: 3px; }
+  .opts { display: flex; gap: 6px; flex-shrink: 0; }
+  .opts button { width: 44px; height: 40px; border-radius: 9px; border: 1px solid var(--line); background: #fff;
+                 font-size: 1.1rem; cursor: pointer; opacity: .55; }
+  .opts button.on { opacity: 1; border-width: 2px; }
+  .opts button.on.y { border-color: var(--y); } .opts button.on.m { border-color: var(--m); } .opts button.on.n { border-color: var(--n); }
+  .status { position: sticky; bottom: 0; background: var(--ink); color: #fff; text-align: center; padding: 9px;
+            border-radius: 10px; font-size: .9rem; margin-top: 10px; }
+  .progress { height: 10px; background: var(--line); border-radius: 6px; overflow: hidden; margin: 8px 0; }
+  .progress div { height: 100%; background: var(--accent); }
+  .muted { color: var(--muted); font-size: .9rem; }
+  .rank { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: start; background: var(--card);
+          border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+  .rank.top { border: 2px solid var(--y); }
+  .rank .no { font-weight: 800; font-size: 1.2rem; color: var(--muted); }
+  .rank.top .no { color: var(--y); }
+  .counts { display: flex; gap: 8px; font-size: .9rem; white-space: nowrap; }
+  .who { font-size: .85rem; color: var(--muted); margin-top: 4px; }
+  .matrix-wrap { overflow-x: auto; }
+  table.matrix { border-collapse: collapse; font-size: .78rem; }
+  table.matrix th, table.matrix td { border: 1px solid var(--line); padding: 3px 5px; text-align: center; white-space: nowrap; }
+  table.matrix th.name { text-align: left; position: sticky; left: 0; background: var(--card); }
+  td.y { background: var(--y-bg); } td.m { background: var(--m-bg); } td.n { background: var(--n-bg); }
+  h2 { font-size: 1.1rem; margin: 0 0 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Reunion 2027</h1>
+  <p>Welches Wochenende im 2. Halbjahr 2027 passt am besten? Trag ein, wann du kannst.</p>
+</header>
+<main>
+  <div id="banner" class="banner" hidden></div>
+
+  <div class="tabs">
+    <button data-tab="enter" class="active">Eintragen</button>
+    <button data-tab="result">Ergebnis</button>
+  </div>
+
+  <section id="enter" class="panel active">
+    <div class="box">
+      <label class="lbl" for="who">Wer bist du?</label>
+      <select id="who"><option value="">Bitte Namen wählen</option></select>
+      <div class="legend">
+        <span>✅ passt gut</span><span>🟡 ginge notfalls</span><span>❌ geht nicht</span><span>Nochmal tippen = zurücksetzen</span>
+      </div>
+      <div class="tools" id="tools" hidden>
+        <button id="fillYes">Alle offenen auf ✅ setzen</button>
+      </div>
+    </div>
+    <div id="list"></div>
+    <div id="status" class="status" hidden></div>
+  </section>
+
+  <section id="result" class="panel">
+    <div class="box">
+      <h2>Stand der Eintragungen</h2>
+      <div id="progText" class="muted"></div>
+      <div class="progress"><div id="progBar" style="width:0%"></div></div>
+      <div id="missing" class="muted"></div>
+    </div>
+    <div class="box">
+      <h2>Beste Wochenenden</h2>
+      <div class="muted" style="margin-bottom:10px">Sortiert nach den wenigsten ❌, dann den meisten ✅, dann den meisten 🟡.</div>
+      <div id="ranking"></div>
+      <button id="showAll" class="tools" style="padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer">Alle Wochenenden anzeigen</button>
+    </div>
+    <div class="box">
+      <h2>Übersicht</h2>
+      <div class="matrix-wrap"><table class="matrix" id="matrix"></table></div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ===== Konfiguration ===== */
+// Nach dem Bereitstellen des Google Apps Script hier die Web-App-URL eintragen:
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQjuh5TAjwtVvZ6NGMq72CZsUg21eXHl8RyHU3869OSq-epfvX9uOY4pOQunWPX2Yf/exec';
+
+const NAMES = ['Alex','Anian','Anni','Elliot','Basti','Passi','Lotte','Tom',
+               'Potter','Quint','Lena','Nadja','Sophie','Hanna','Toni'];
+
+// Feiertage in Bayern, Schlüssel = Freitag des Wochenendes
+const HOLIDAYS = {
+  '2027-08-13': 'So 15.08. Mariä Himmelfahrt',
+  '2027-10-01': 'So 03.10. Tag der Deutschen Einheit',
+  '2027-10-29': 'Mo 01.11. Allerheiligen: langes Wochenende',
+  '2027-12-24': 'Heiligabend, Sa/So Weihnachtsfeiertage',
+  '2027-12-31': 'Silvester, Sa 01.01. Neujahr'
+};
+const MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+
+/* ===== Wochenenden erzeugen (Freitage im 2. Halbjahr 2027) ===== */
+const pad = n => String(n).padStart(2, '0');
+const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const dm = d => pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.';
+const WEEKENDS = [];
+for (let d = new Date(2027, 6, 2); d <= new Date(2027, 11, 31); d.setDate(d.getDate() + 7)) {
+  const fri = new Date(d), sun = new Date(d); sun.setDate(sun.getDate() + 2);
+  const id = iso(fri);
+  WEEKENDS.push({ id, month: fri.getMonth(), label: 'Fr ' + dm(fri) + ' bis So ' + dm(sun), hol: HOLIDAYS[id] || '' });
+}
+
+/* ===== Zustand ===== */
+const demo = !SCRIPT_URL.startsWith('https://');
+let people = {};          // { Name: { votes: {id: 'y'|'m'|'n'}, updated } }
+let me = '';
+let myVotes = {};
+let saveTimer = null, saving = false, dirty = false, showAll = false;
+
+const $ = id => document.getElementById(id);
+function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function load(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+
+/* ===== Server ===== */
+async function fetchData() {
+  if (demo) return;
+  try {
+    const r = await fetch(SCRIPT_URL);
+    const data = await r.json();
+    if (data.people) { people = data.people; if (!dirty && me) myVotes = { ...(people[me]?.votes || {}) }; render(); }
+  } catch (e) { setStatus('Laden fehlgeschlagen. Bitte Seite neu laden.'); }
+}
+
+async function save() {
+  if (!me) return;
+  if (demo) { people[me] = { votes: { ...myVotes }, updated: new Date().toISOString() }; dirty = false; setStatus('Gespeichert (Testmodus, nur lokal)'); renderResult(); return; }
+  if (saving) { scheduleSave(); return; }
+  saving = true; setStatus('Speichere …');
+  const sent = JSON.stringify(myVotes);
+  try {
+    const r = await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                                        body: JSON.stringify({ name: me, votes: myVotes }) });
+    const data = await r.json();
+    if (data.error) throw new Error(data.error);
+    people = data.people;
+    if (JSON.stringify(myVotes) === sent) dirty = false;
+    setStatus('Gespeichert ✓');
+    renderResult();
+  } catch (e) {
+    setStatus('Speichern fehlgeschlagen. Bitte nochmal tippen oder Seite neu laden.');
+  } finally { saving = false; }
+}
+function scheduleSave() { dirty = true; clearTimeout(saveTimer); saveTimer = setTimeout(save, 700); }
+function setStatus(t) { const s = $('status'); s.hidden = false; s.textContent = t; }
+
+/* ===== Eingabe ===== */
+function renderList() {
+  const list = $('list'); list.innerHTML = '';
+  $('tools').hidden = !me;
+  if (!me) { list.innerHTML = '<div class="muted" style="padding:6px">Wähle oben deinen Namen, dann erscheinen die Wochenenden.</div>'; return; }
+  let lastMonth = -1;
+  WEEKENDS.forEach(w => {
+    if (w.month !== lastMonth) { lastMonth = w.month; const m = document.createElement('div'); m.className = 'month'; m.textContent = MONTHS[w.month]; list.appendChild(m); }
+    const v = myVotes[w.id] || '';
+    const row = document.createElement('div'); row.className = 'wk' + (v ? ' s-' + v : '');
+    const left = document.createElement('div');
+    left.innerHTML = '<div class="date"></div>' + (w.hol ? '<div class="hol"></div>' : '');
+    left.querySelector('.date').textContent = w.label;
+    if (w.hol) left.querySelector('.hol').textContent = '🎉 ' + w.hol;
+    const opts = document.createElement('div'); opts.className = 'opts';
+    [['y','✅','passt gut'],['m','🟡','ginge notfalls'],['n','❌','geht nicht']].forEach(([k, icon, title]) => {
+      const b = document.createElement('button'); b.className = k + (v === k ? ' on' : ''); b.textContent = icon; b.title = title;
+      b.onclick = () => { if (myVotes[w.id] === k) delete myVotes[w.id]; else myVotes[w.id] = k; renderList(); scheduleSave(); };
+      opts.appendChild(b);
+    });
+    row.append(left, opts); list.appendChild(row);
+  });
+  const done = WEEKENDS.filter(w => myVotes[w.id]).length;
+  if (!saving && !dirty) setStatus(done + ' von ' + WEEKENDS.length + ' Wochenenden ausgefüllt');
+}
+
+/* ===== Auswertung ===== */
+function stats() {
+  return WEEKENDS.map(w => {
+    const s = { ...w, y: [], m: [], n: [], open: [] };
+    NAMES.forEach(n => { const v = people[n]?.votes?.[w.id]; (v ? s[v] : s.open).push(n); });
+    return s;
+  }).sort((a, b) => a.n.length - b.n.length || b.y.length - a.y.length || b.m.length - a.m.length || a.id.localeCompare(b.id));
+}
+
+function renderResult() {
+  const participated = NAMES.filter(n => people[n] && Object.keys(people[n].votes || {}).length);
+  const missing = NAMES.filter(n => !participated.includes(n));
+  $('progText').textContent = participated.length + ' von ' + NAMES.length + ' haben eingetragen';
+  $('progBar').style.width = (participated.length / NAMES.length * 100) + '%';
+  $('missing').textContent = missing.length ? 'Fehlt noch: ' + missing.join(', ') : 'Alle haben eingetragen 🎉';
+
+  const st = stats();
+  const shown = showAll ? st : st.slice(0, 5);
+  const r = $('ranking'); r.innerHTML = '';
+  shown.forEach((s, i) => {
+    const el = document.createElement('div'); el.className = 'rank' + (i === 0 && participated.length ? ' top' : '');
+    el.innerHTML = '<div class="no"></div><div><div class="date"></div><div class="hol-slot"></div><div class="who"></div></div><div class="counts"></div>';
+    el.querySelector('.no').textContent = (i + 1) + '.';
+    el.querySelector('.date').textContent = s.label;
+    if (s.hol) { const h = document.createElement('span'); h.className = 'hol'; h.textContent = '🎉 ' + s.hol; el.querySelector('.hol-slot').appendChild(h); }
+    const parts = [];
+    if (s.n.length) parts.push('❌ ' + s.n.join(', '));
+    if (s.m.length) parts.push('🟡 ' + s.m.join(', '));
+    if (s.open.length && s.open.length < NAMES.length) parts.push('offen: ' + s.open.join(', '));
+    el.querySelector('.who').textContent = parts.join('  ·  ') || (s.y.length ? 'Alle können 🙌' : '');
+    el.querySelector('.counts').textContent = '✅ ' + s.y.length + '  🟡 ' + s.m.length + '  ❌ ' + s.n.length;
+    r.appendChild(el);
+  });
+  $('showAll').textContent = showAll ? 'Nur Top 5 anzeigen' : 'Alle ' + WEEKENDS.length + ' Wochenenden anzeigen';
+
+  const sym = { y: '✅', m: '🟡', n: '❌' };
+  let h = '<tr><th class="name">Name</th>' + WEEKENDS.map(w => '<th title="' + w.label + '">' + w.id.slice(8) + '.' + w.id.slice(5, 7) + (w.hol ? '🎉' : '') + '</th>').join('') + '</tr>';
+  NAMES.forEach(n => {
+    h += '<tr><th class="name">' + n + '</th>' + WEEKENDS.map(w => { const v = people[n]?.votes?.[w.id]; return '<td class="' + (v || '') + '">' + (v ? sym[v] : '') + '</td>'; }).join('') + '</tr>';
+  });
+  $('matrix').innerHTML = h;
+}
+
+function render() { renderList(); renderResult(); }
+
+/* ===== Start ===== */
+NAMES.forEach(n => { const o = document.createElement('option'); o.value = o.textContent = n; $('who').appendChild(o); });
+$('who').onchange = e => {
+  me = e.target.value; store('reunion-name', me);
+  myVotes = { ...(people[me]?.votes || {}) }; dirty = false; renderList();
+};
+$('fillYes').onclick = () => { WEEKENDS.forEach(w => { if (!myVotes[w.id]) myVotes[w.id] = 'y'; }); renderList(); scheduleSave(); };
+$('showAll').onclick = () => { showAll = !showAll; renderResult(); };
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('active', x === b));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === b.dataset.tab));
+  if (b.dataset.tab === 'result') fetchData();
+});
+if (demo) { const bn = $('banner'); bn.hidden = false; bn.textContent = 'Testmodus: Es ist noch keine Script-URL eingetragen. Eingaben werden nicht gespeichert.'; }
+
+const saved = load('reunion-name');
+if (NAMES.includes(saved)) { me = saved; $('who').value = saved; }
+render();
+fetchData().then(() => { if (me && !dirty) { myVotes = { ...(people[me]?.votes || {}) }; renderList(); } });
+setInterval(() => { if (!dirty && !saving) fetchData(); }, 60000);
+</script>
+</body>
+</html>
